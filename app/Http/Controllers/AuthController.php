@@ -3,38 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    protected $jwt;
-    
-    public function __construct(JWTAuth $jwt)
-    {
-        $this->jwt = $jwt;
-    }
 
     public function register(Request $request)
     {
         // method validate is part of BaseController class that use ProvidesConvenienceMethods trait
-        $this->validate($request, [
+        $validated = $this->validate($request, [
             'name' => 'required|unique:users',
-            'email' => 'required|unique:users|email:rfc,dns',
+            'email' => 'required|unique:users|email',
             'password' => 'required',
         ]);
 
         $user = User::create([
-          'name' => $request->name,  
-          'email' => $request->email,  
-          'password' => Hash::make($request->password),  
+          'name' => $validated['name'],  
+          'email' => $validated['email'],  
+          'password' => Hash::make($validated['password']),  
         ]);
 
-        $token = $this->jwt->fromUser($user);
+        $token = JWTAuth::fromUser($user);
 
         return response()->json(compact('user', 'token'), 201);
     }
 
-    //
+    public function login(Request $request)
+    {
+        $validated = $this->validate($request, [
+            'email' => 'required|exists:users,email',
+            'password' => 'required'
+        ]);
+
+        $token = JWTAuth::attempt($validated);
+        if( $token == true ) {
+            $user = User::where('email', $validated['email'])->first();
+            return response()->json(compact('user', 'token'));
+        }
+        return response()->json(['status' => 'failed', 'error' => 'Password is invalid'], 422);
+    }
+
 }

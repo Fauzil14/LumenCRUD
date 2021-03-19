@@ -17,4 +17,13 @@
 //     return $router->app->version();
 // });
 
-$router->post('/register', 'AuthController@register');
+$router->group(['prefix' => 'api'], function() use ($router) {
+    
+    $router->post('/register', 'AuthController@register');
+    $router->post('/login', 'AuthController@login');    
+
+    $router->group(['prefix' => 'product', 'middleware' => 'jwt.auth'], function() use ($router) {
+        $router->get('/index', 'ProductController@index');
+    });
+
+});
