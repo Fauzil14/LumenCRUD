@@ -23,13 +23,13 @@ class Product extends Model
     protected static function booted() 
     {
         static::creating(function($query) {
-            if($query->pic_one != null) {
+            if($query->pic_one == null) {
                 $query->pic_one = url('/pictures/No_Image_Available.jpg');
             }
-            if($query->pic_two != null) {
+            if($query->pic_two == null) {
                 $query->pic_two = url('/pictures/No_Image_Available.jpg');
             }
-            if($query->pic_three != null) {
+            if($query->pic_three == null) {
                 $query->pic_three = url('/pictures/No_Image_Available.jpg');
             }
         });

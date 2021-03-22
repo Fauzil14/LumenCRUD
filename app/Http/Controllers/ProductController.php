@@ -58,7 +58,7 @@ class ProductController extends Controller
             $product->product_name  = $request->product_name;
             $product->category_id   = $request->category_id;
             $product->stock         = $request->stock;
-            if($request->filled('pic_one') && $request->file('pic_one')) {
+            if($request->file('pic_one')) {
                 $url_one = $this->storeProductPic($request->file('pic_one'), $request->product_code);
                 $product->pic_one       = $url_one;
             }
