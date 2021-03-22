@@ -20,10 +20,16 @@
 $router->group(['prefix' => 'api'], function() use ($router) {
     
     $router->post('/register', 'AuthController@register');
-    $router->post('/login', 'AuthController@login');    
-
+    $router->post('/login', 'AuthController@login');
+    
+    $router->get('linkfile', function() {
+        return app()->make('files')->link(storage_path('app/public'), rtrim(app()->basePath('public/storage'), '/'));
+    });
+    
     $router->group(['prefix' => 'product', 'middleware' => 'jwt.auth'], function() use ($router) {
         $router->get('/index', 'ProductController@index');
+        $router->get('/show/{product_id}', 'ProductController@show');
+        $router->post('/create', 'ProductController@create');
     });
 
 });
