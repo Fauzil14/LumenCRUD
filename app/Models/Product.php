@@ -13,27 +13,9 @@ class Product extends Model
         'product_name',
         'category_id',
         'stock',
-        'pic_one',
-        'pic_two',
-        'pic_three',
     ];
 
     protected $appends = [];
-
-    protected static function booted() 
-    {
-        static::creating(function($query) {
-            if($query->pic_one == null) {
-                $query->pic_one = url('/pictures/No_Image_Available.jpg');
-            }
-            if($query->pic_two == null) {
-                $query->pic_two = url('/pictures/No_Image_Available.jpg');
-            }
-            if($query->pic_three == null) {
-                $query->pic_three = url('/pictures/No_Image_Available.jpg');
-            }
-        });
-    }    
 
     public function getCategoryNameAttribute() {
         return $this->category()->first()->category_name;
@@ -42,4 +24,10 @@ class Product extends Model
     public function category() {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
+
+    public function productPicture() 
+    {
+        return $this->hasMany(ProductPicture::class, 'product_id', 'id');
+    }
+
 }
