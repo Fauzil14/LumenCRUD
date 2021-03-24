@@ -26,7 +26,7 @@ $router->group(['prefix' => 'api'], function() use ($router) {
         return app()->make('files')->link(storage_path('app/public'), rtrim(app()->basePath('public/storage'), '/'));
     });
     
-    $router->group(['prefix' => 'product', 'middleware' => 'jwt.auth'], function() use ($router) {
+    $router->group(['prefix' => 'product','middleware' => 'jwt-auth'], function() use ($router) {
         $router->get('/index', 'ProductController@index');
         $router->get('/show/{product_id}', 'ProductController@show');
         $router->post('/create', 'ProductController@create');
